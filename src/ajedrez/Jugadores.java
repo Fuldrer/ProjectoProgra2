@@ -8,6 +8,8 @@ package ajedrez;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.io.RandomAccessFile;
+import java.io.IOException;
 
 /**
  *
@@ -19,20 +21,32 @@ static ArrayList<Jugadores> jugador = new ArrayList<>();
     private int puntos;
     private final Calendar fechaC;
     private Jugadores current;
+   static RandomAccessFile usuarios;
 
     private Jugadores(String nom, String pass, Calendar creacion) {
         nombre = nom;
         contraseña = pass;
         puntos = 0;
         this.fechaC= creacion;
+        try{
+        usuarios = new RandomAccessFile("usuarios.aj", "rw");
+        }
+        catch(IOException e){
+            
+        }
     }
 
-    public static Jugadores addJugador(String n, String p) {
-        if (searchJugador(n)== null){
+    public static Jugadores addJugador(String n, String p) throws IOException {
+        usuarios.seek(usuarios.length());
+        if (searchJugador(n,p)== null){
             if (p.length() == 5) {
-                jugador.add(new Jugadores(n, p,Calendar.getInstance()));
-                System.out.println("Jugador Creado con Exito");
-                return searchJugador(n);
+                usuarios.writeUTF(n);
+                usuarios.writeUTF(p);
+                usuarios.writeLong(new Date().getTime());
+                return new Jugadores(n,p,Calendar.getInstance());
+                //jugador.add(new Jugadores(n, p,Calendar.getInstance()));
+                //System.out.println("Jugador Creado con Exito");
+                //return searchJugador(n);
             }
             System.out.println("Longitud de la contraseña no es igual a 5");
             return null;
@@ -41,13 +55,23 @@ static ArrayList<Jugadores> jugador = new ArrayList<>();
         return null;
     }
 
-    public static Jugadores searchJugador(String n) {
-        for (Jugadores jug : jugador) {
+    public static Jugadores searchJugador(String n, String p) throws IOException {
+        usuarios.seek(0);
+        while(usuarios.getFilePointer() < usuarios.length()){
+            String c = usuarios.readUTF();
+            String a =usuarios.readUTF();
+            usuarios.readLong();
+            if(n.equals(c) && p.equals(a)){
+                return new Jugadores(n,p,Calendar.getInstance());
+            }
+        }
+        return null;
+        /*for (Jugadores jug : jugador) {
             if (n.equals(jug.nombre)) {
                 return jug;
             }
         }
-        return null;
+        return null;*/
     }
     public static ArrayList<Jugadores> getJugador() {
         return jugador;

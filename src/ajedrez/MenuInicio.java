@@ -6,6 +6,7 @@
 package ajedrez;
 
 import java.util.Scanner;
+import java.io.IOException;
 
 /**
  *
@@ -16,13 +17,13 @@ public class MenuInicio {
     private static Jugadores jugadorActual;
     public static Scanner lea = new Scanner(System.in);
 
-    public static Jugadores CrearJugador(String user, String pass) {
+    public static Jugadores CrearJugador(String user, String pass) throws IOException {
         Jugadores current1 =Jugadores.addJugador(user, pass);
         return current1;
     }
 
-    public static Jugadores LogIn(String usuario, String password) {
-        Jugadores actual = Jugadores.searchJugador(usuario);
+    public static Jugadores LogIn(String usuario, String password) throws IOException {
+        Jugadores actual = Jugadores.searchJugador(usuario, password);
         jugadorActual=actual;
         if (actual!= null) {
             if (actual.getPassword().equals(password)) {

@@ -7,6 +7,7 @@ package ajedrez;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.io.IOException;
 
 /**
  *
@@ -20,7 +21,7 @@ public class Jugar {
     public static Tablero e;
     public static boolean exit = false;
     
-    public static void iniciar(){
+    public static void iniciar() throws IOException{
         System.out.println("Iniciando Juego de Ajedrez");
         player1 = MenuInicio.getJugadorActual();
         System.out.println("Jugador 1: "+player1.getNombre());
@@ -28,7 +29,9 @@ public class Jugar {
             System.out.println("Jugador 2");
             System.out.println("Ingrese el nombre: ");
             String n = lea.next();
-            player2 = Jugadores.searchJugador(n);
+            System.out.println("Ingrese el password: ");
+            String c = lea.next();
+            player2 = Jugadores.searchJugador(n,c);
             if(player2 != null){
                 if(!(player2.getNombre().equals(player1.getNombre()))){
                     System.out.println("Ingrese el password: ");
@@ -162,7 +165,12 @@ public class Jugar {
     }
     
     public static void Play(){
+        try{
         iniciar();
+        }
+        catch(IOException e){
+            
+        }
         do{
             try{
               mover(); 
